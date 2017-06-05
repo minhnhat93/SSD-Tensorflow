@@ -316,8 +316,8 @@ def main(_):
                 logdir=FLAGS.eval_dir,
                 num_evals=num_batches,
                 eval_op=list(names_to_updates.values()),
-                variables_to_restore=variables_to_restore,
-                session_config=config)
+                variables_to_restore=variables_to_restore,)
+                #session_config=config)
             # Log time spent.
             elapsed = time.time()
             elapsed = elapsed - start
@@ -338,7 +338,7 @@ def main(_):
                 variables_to_restore=variables_to_restore,
                 eval_interval_secs=60,
                 max_number_of_evaluations=np.inf,
-                session_config=config,
+                #session_config=config,
                 timeout=None)
 
 
