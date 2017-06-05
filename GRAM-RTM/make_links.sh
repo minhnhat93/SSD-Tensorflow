@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-GRAM_DIR=/home/nhat/Engage_Grant_Project/Data/GRAM-RTM/GRAM-RTMv4
+GRAM_DIR=/home/nhat/engage-project/dataset/GRAM-RTM/GRAM-RTMv4
 for DATASET in M-30 M-30-HD Urban1;
 do
   rm ${DATASET} -rf
