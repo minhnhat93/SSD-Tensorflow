@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-for DATASET in M-30-HD Urban1;
+for DATASET in M-30 M-30-HD Urban1;
 do
   DATASET_DIR=GRAM-RTM/${DATASET}
   EVAL_DIR=./logs/${DATASET}
