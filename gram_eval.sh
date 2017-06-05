@@ -9,7 +9,7 @@ do
       --dataset_dir=${DATASET_DIR} \
       --dataset_name=gram \
       --dataset_split_name=M-30 \
-      --model_name=ssd_300_vgg \
+      --model_name=ssd_512_vgg\
       --checkpoint_path=${CHECKPOINT_PATH} \
       --batch_size=1 | tee ~/ssd_eval_${DATASET}.log
 done
