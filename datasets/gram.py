@@ -16,10 +16,11 @@
 """
 import tensorflow as tf
 from datasets import pascalvoc_common
+import os
 
 slim = tf.contrib.slim
 
-FILE_PATTERN = 'voc_2012_%s_*.tfrecord'
+FILE_PATTERN = 'gram_%s_*.tfrecord'
 ITEMS_TO_DESCRIPTIONS = {
     'image': 'A color image of varying height and width.',
     'shape': 'Shape of the image',
@@ -52,7 +53,9 @@ TRAIN_STATISTICS = {
     'total': (11540, 27450),
 }
 SPLITS_TO_SIZES = {
-    'train': 17125,
+    'M-30': 7520,
+    'M-30-HD': 9391,
+    'Urban1': 23436
 }
 SPLITS_TO_STATISTICS = {
     'train': TRAIN_STATISTICS,

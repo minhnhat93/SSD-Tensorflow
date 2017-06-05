@@ -58,6 +58,13 @@ import xml.etree.ElementTree as ET
 from datasets.dataset_utils import int64_feature, float_feature, bytes_feature
 from datasets.pascalvoc_common import VOC_LABELS
 
+GRAM_LABELS = {
+  'none': (0, 'Background'),
+  'car': (1, 'Vehicle'),
+  'van': (2, 'Vehicle'),
+  'truck': (3, 'Vehicle'),
+  'big-truck': (4, 'Vehicle'),
+}
 # Original dataset organisation.
 DIRECTORY_ANNOTATIONS = 'Annotations/'
 DIRECTORY_IMAGES = 'JPEGImages/'
@@ -79,11 +86,12 @@ def _process_image(directory, name):
     width: integer, image width in pixels.
   """
   # Read the image file.
-  filename = directory + DIRECTORY_IMAGES + name + '.jpg'
-  image_data = tf.gfile.FastGFile(filename, 'r').read()
+  index = int(name)
+  filename = os.path.join(directory, DIRECTORY_IMAGES, 'image%06d' % (index + 1) + '.jpg')
+  image_data = tf.gfile.FastGFile(filename, 'rb').read()
 
   # Read the XML annotation file.
-  filename = os.path.join(directory, DIRECTORY_ANNOTATIONS, name + '.xml')
+  filename = os.path.join(directory, DIRECTORY_ANNOTATIONS, str(index) + '.xml')
   tree = ET.parse(filename)
   root = tree.getroot()
 
@@ -99,9 +107,9 @@ def _process_image(directory, name):
   difficult = []
   truncated = []
   for obj in root.findall('object'):
-    label = obj.find('name').text
-    if label is None:
-      label = obj.find('class').text
+    label = obj.find('class').text
+    if label not in VOC_LABELS.keys():
+      continue
     labels.append(int(VOC_LABELS[label][0]))
     labels_text.append(label.encode('ascii'))
 
@@ -225,4 +233,4 @@ def run(dataset_dir, output_dir, name='voc_train', shuffling=False):
   # Finally, write the labels file:
   # labels_to_class_names = dict(zip(range(len(_CLASS_NAMES)), _CLASS_NAMES))
   # dataset_utils.write_label_file(labels_to_class_names, dataset_dir)
-  print('\nFinished converting the Pascal VOC dataset!')
+  print('\nFinished converting the GRAM-RTM dataset!')
