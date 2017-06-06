@@ -18,6 +18,8 @@ import math
 import sys
 import six
 import time
+import os
+import _pickle
 
 import numpy as np
 import tensorflow as tf
@@ -28,6 +30,7 @@ from tensorflow.python.framework import ops
 from datasets import dataset_factory
 from nets import nets_factory
 from preprocessing import preprocessing_factory
+from PIL import Image
 
 slim = tf.contrib.slim
 
@@ -103,6 +106,26 @@ tf.app.flags.DEFINE_boolean(
 
 FLAGS = tf.app.flags.FLAGS
 
+# ROI check func
+def in_roi_check(roi, bbox):
+    height, width = roi.shape
+    y_min = max(int(bbox[1]) - 1, 0)
+    y_max = min(int(bbox[3]) - 1, height)
+    x_min = max(int(bbox[0]) - 1, 0)
+    x_max = min(int(bbox[2]) - 1, width)
+    _bbox = np.zeros_like(roi)
+    _bbox[y_min:y_max+1, x_min:x_max+1] = 1
+    return (_bbox * roi).sum() > 0
+# open ROI if possible
+roi_path = os.path.join(FLAGS.dataset_dir, 'roi_map.jpg')
+if os.path.isfile(roi_path):
+    roi = np.asarray(Image.open(roi_path), dtype=np.int32)
+    roi = roi.sum(axis=2)
+    roi.setflags(write=1)
+    roi[roi <= 100] = 0
+    roi[roi > 100] = 1
+else:
+    roi = None
 
 def main(_):
     if not FLAGS.dataset_dir:
@@ -200,6 +223,18 @@ def main(_):
                                         clipping_bbox=None,
                                         top_k=FLAGS.select_top_k,
                                         keep_top_k=FLAGS.keep_top_k)
+            # Remove all bounding box that are outside of roi region
+            if roi is not None:
+                index = 0
+                while index < len(rscores):
+                    if not in_roi_check(roi, rbboxes[index]):
+                        rscores.pop(index)
+                        rbboxes.pop(index)
+                        print('ROI removed %d' % index)
+                    else:
+                        index += 1
+            _pickle.dump([rscores, rbboxes], open(os.path.join(FLAGS.dataset_dir, 'bboxes.pkl'), 'wb'),
+                         _pickle.HIGHEST_PROTOCOL)
             # Compute TP and FP statistics.
             num_gbboxes, tp, fp, rscores = \
                 tfe.bboxes_matching_batch(rscores.keys(), rscores, rbboxes,

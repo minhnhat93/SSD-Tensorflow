@@ -6,4 +6,5 @@ do
   mkdir ${DATASET}
   ln -s ${GRAM_DIR}/Annotations/${DATASET}/xml ${DATASET}/Annotations
   ln -s ${GRAM_DIR}/Images/${DATASET}/ ${DATASET}/JPEGImages
+  ln -s ${GRAM_DIR}/ROI/${DATASET}-map.jpg ${DATASET}/roi_map.jpg
 done

@@ -53,7 +53,7 @@ TRAIN_STATISTICS = {
     'total': (11540, 27450),
 }
 SPLITS_TO_SIZES = {
-    'M-30': 7520,
+    'M-30': 10,
     'M-30-HD': 9391,
     'Urban1': 23436
 }
